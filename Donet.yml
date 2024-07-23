@@ -1,0 +1,23 @@
+
+trigger:
+- master
+pool:
+	vmImage: ubuntu-latest
+
+steps:
+
+- task: DotNetCoreCLI@2 
+   inputs:
+	command: 'build'
+
+- task: DotNetCoreCLI@2 
+   inputs:
+	  command: "publish' 
+	  publishWebProjects: true
+	  arguments: '-c Release -o /tmp/myrelease' zipAfterPublish: false modifyOutputPath: false
+
+- task: PublishBuildArtifacts@1 
+   inputs:
+	  PathtoPublish: '/tmp/myrelease'
+	  ArtifactName: 'demoapp1' 
+	  publishLocation: ‘Container’

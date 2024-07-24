@@ -1,0 +1,30 @@
+rigger:
+- main
+pool:
+  vmImage: ubuntu-latest
+steps:
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'MyWebApp/pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package'
+- task: JFrogGenericArtifacts@1
+  inputs:
+    command: 'Upload'
+    connection: 'Artifactory_svc_conn'
+    specSource: 'taskConfiguration'
+    fileSpec: |
+      {
+        "files": [
+          {
+            "pattern": "*.war",
+            "target": "libs-snapshot-local"
+          }
+        ]
+      }
+    failNoOp: true
